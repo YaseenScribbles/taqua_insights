@@ -5,6 +5,9 @@ import {
     Box,
     Button,
     Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     IconButton,
     MenuItem,
     Table,
@@ -14,6 +17,7 @@ import {
     TableHead,
     TableRow,
     TextField,
+    Typography,
     useMediaQuery,
     useTheme,
 } from "@mui/material";
@@ -30,7 +34,7 @@ import {
     CreateUser as User,
     User as UserInfo,
 } from "@/Api/Users";
-import { Delete, Edit } from "@mui/icons-material";
+import { Close, Delete, Edit } from "@mui/icons-material";
 
 interface UsersProps extends PageProps {}
 
@@ -199,77 +203,101 @@ const Users: React.FC<UsersProps> = ({ auth }) => {
                 onClose={() => setShowModal(!showModal)}
                 fullScreen={isMobile}
             >
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <Box
-                        display={"flex"}
-                        flexDirection={"column"}
-                        gap={2}
-                        padding={2}
-                        sx={{ minWidth: 300 }}
+                <DialogTitle sx={{ m: 0, p: 1 }} align="center">
+                    Create User
+                    <IconButton
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 5,
+                            color: (theme) => theme.palette.secondary.main,
+                        }}
+                        onClick={() => setShowModal(false)}
                     >
-                        <TextField
-                            error={!!errors.name}
-                            helperText={errors.name?.message}
-                            id="name"
-                            label="Name"
-                            variant="filled"
-                            {...register("name")}
-                            autoFocus
-                        />
-                        <TextField
-                            error={!!errors.email}
-                            helperText={errors.email?.message}
-                            id="email"
-                            label="Email"
-                            variant="filled"
-                            {...register("email")}
-                        />
-                        <TextField
-                            error={!!errors.password}
-                            helperText={errors.password?.message}
-                            id="password"
-                            label="Password"
-                            variant="filled"
-                            {...register("password")}
-                            type="password"
-                        />
-                        <TextField
-                            error={!!errors.password_confirmation}
-                            helperText={errors.password_confirmation?.message}
-                            id="confirm_password"
-                            label="Confirm Password"
-                            variant="filled"
-                            {...register("password_confirmation")}
-                            type="password"
-                        />
-                        <Controller
-                            name="role"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField
-                                    select
-                                    error={!!errors.role}
-                                    helperText={errors.role?.message}
-                                    id="role"
-                                    label="Role"
-                                    variant="filled"
-                                    {...field}
-                                    value={field.value || "user"}
-                                >
-                                    <MenuItem value={"admin"}>
-                                        Administrator
-                                    </MenuItem>
-                                    <MenuItem value={"user"}>User</MenuItem>
-                                </TextField>
-                            )}
-                        />
-                        <Box display="flex" gap={1}>
+                        <Close />
+                    </IconButton>
+                </DialogTitle>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <DialogContent sx={{ padding: 0 }}>
+                        <Box
+                            display={"flex"}
+                            flexDirection={"column"}
+                            gap={2}
+                            padding={2}
+                            sx={{ minWidth: 300 }}
+                        >
+                            <TextField
+                                error={!!errors.name}
+                                helperText={errors.name?.message}
+                                id="name"
+                                label="Name"
+                                variant="filled"
+                                {...register("name")}
+                                autoFocus
+                            />
+                            <TextField
+                                error={!!errors.email}
+                                helperText={errors.email?.message}
+                                id="email"
+                                label="Email"
+                                variant="filled"
+                                {...register("email")}
+                            />
+                            <TextField
+                                error={!!errors.password}
+                                helperText={errors.password?.message}
+                                id="password"
+                                label="Password"
+                                variant="filled"
+                                {...register("password")}
+                                type="password"
+                            />
+                            <TextField
+                                error={!!errors.password_confirmation}
+                                helperText={
+                                    errors.password_confirmation?.message
+                                }
+                                id="confirm_password"
+                                label="Confirm Password"
+                                variant="filled"
+                                {...register("password_confirmation")}
+                                type="password"
+                            />
+                            <Controller
+                                name="role"
+                                control={control}
+                                render={({ field }) => (
+                                    <TextField
+                                        select
+                                        error={!!errors.role}
+                                        helperText={errors.role?.message}
+                                        id="role"
+                                        label="Role"
+                                        variant="filled"
+                                        {...field}
+                                        value={field.value || "user"}
+                                    >
+                                        <MenuItem value={"admin"}>
+                                            Administrator
+                                        </MenuItem>
+                                        <MenuItem value={"user"}>User</MenuItem>
+                                    </TextField>
+                                )}
+                            />
+                        </Box>
+                    </DialogContent>
+                    <DialogActions>
+                        <Box
+                            display="flex"
+                            gap={2}
+                            paddingInline={2}
+                            marginBottom={1}
+                        >
                             <Button
                                 type="submit"
                                 variant="outlined"
                                 disabled={isAddPending || isUpdatePending}
                                 loading={isAddPending || isUpdatePending}
-                                fullWidth
                             >
                                 Save
                             </Button>
@@ -290,7 +318,7 @@ const Users: React.FC<UsersProps> = ({ auth }) => {
                                 Reset
                             </Button>
                         </Box>
-                    </Box>
+                    </DialogActions>
                 </form>
             </Dialog>
             <TableContainer>
