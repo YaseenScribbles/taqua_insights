@@ -22,14 +22,11 @@ import CenterBox from "@/Components/CenterBox";
 import { PageProps } from '@inertiajs/core'
 
 const xAxisSettings: ChartsXAxisProps = {
-    tickLabelPlacement: "middle",
     tickPlacement: "middle",
     tickLabelStyle: {
-        fontSize: "11",
+        fontSize: 11,
         textAnchor: "end",
         angle: -45,
-        textAlign: "left",
-        display:"block"
     },
 };
 
