@@ -28,7 +28,8 @@ const xAxisSettings: ChartsXAxisProps = {
         fontSize: "11",
         textAnchor: "end",
         angle: -45,
-        textAlign: "left"
+        textAlign: "left",
+        display:"block"
     },
 };
 

@@ -18,8 +18,6 @@ import {
     LocalShipping,
     Category,
     MoreVert,
-    Inbox,
-    Mail,
     Article,
     People,
     History,
@@ -31,7 +29,7 @@ import { router } from "@inertiajs/react";
 const StyledFab = styled(Fab)({
     position: "absolute",
     zIndex: 1,
-    top: -20,
+    top: -30,
     left: 0,
     right: 0,
     margin: "0 auto",
@@ -172,25 +170,25 @@ const CustomMenu: React.FC<CustomMenuProps> = ({ role }) => {
                     sx={{ display: "flex", justifyContent: "space-around" }}
                 >
                     <IconButton
-                        color="inherit"
+                        color={route().current() === 'supplier' ? "primary" :  "inherit"}
                         onClick={() => router.visit(route("supplier"))}
                     >
                         <LocalShipping />
                     </IconButton>
                     <IconButton
-                        color="inherit"
+                        color={route().current() === 'product' ? "primary" :  "inherit"}
                         onClick={() => router.visit(route("product"))}
                     >
                         <Category />
                     </IconButton>
                     <StyledFab
-                        color="secondary"
+                        color={route().current() === 'dashboard' ? "primary" :  "secondary"}
                         onClick={() => router.visit(route("dashboard"))}
                     >
                         <BarChart />
                     </StyledFab>
                     <IconButton
-                        color="inherit"
+                        color={route().current() === 'psr' ? "primary" :  "inherit"}
                         onClick={() => router.visit(route("psr"))}
                     >
                         <Article />

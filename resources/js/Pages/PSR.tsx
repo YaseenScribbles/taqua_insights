@@ -13,6 +13,7 @@ import {
     TableBody,
     LinearProgress,
     TableFooter,
+    Table,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { PageProps } from "@inertiajs/core";
@@ -234,46 +235,54 @@ const PSR: React.FC<InvoiceProps> = ({ suppliers, auth }) => {
             </Box>
             {isMobile ? (
                 <TableContainer>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell></TableCell>
-                            <TableCell>Product</TableCell>
-                            <TableCell>Purchase</TableCell>
-                            <TableCell>Sales</TableCell>
-                            <TableCell>Stock</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {isPsrError && (
+                    <Table>
+                        <TableHead>
                             <TableRow>
-                                <TableCell colSpan={5} align="center">
-                                    <Typography variant="body1">
-                                        Network Error
-                                    </Typography>
+                                <TableCell></TableCell>
+                                <TableCell>Product</TableCell>
+                                <TableCell>Purchase</TableCell>
+                                <TableCell>Sales</TableCell>
+                                <TableCell>Stock</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {isPsrError && (
+                                <TableRow>
+                                    <TableCell colSpan={5} align="center">
+                                        <Typography variant="body1">
+                                            Network Error
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                            {isPsrLoading && (
+                                <TableRow>
+                                    <TableCell colSpan={5}>
+                                        <LinearProgress />
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                            {psr &&
+                                psr.length > 0 &&
+                                psr.map((data: InvoiceProducts) => (
+                                    <PSRRow key={data.product} data={data} />
+                                ))}
+                        </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TableCell colSpan={2}>Summary</TableCell>
+                                <TableCell align="right">
+                                    {totalPurchase}
+                                </TableCell>
+                                <TableCell align="right">
+                                    {l2Sales + l4Sales}
+                                </TableCell>
+                                <TableCell align="right">
+                                    {l2Stock + l4Stock + whstock}
                                 </TableCell>
                             </TableRow>
-                        )}
-                        {
-                            isPsrLoading && <TableRow>
-                                <TableCell colSpan={5}>
-                                    <LinearProgress />
-                                </TableCell>
-                            </TableRow>
-                        }
-                        {psr &&
-                            psr.length > 0 &&
-                            psr.map((data: InvoiceProducts) => (
-                                <PSRRow key={data.product} data={data} />
-                            ))}
-                    </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell colSpan={2}>Summary</TableCell>
-                            <TableCell align="right">{totalPurchase}</TableCell>
-                            <TableCell align="right">{l2Sales + l4Sales}</TableCell>
-                            <TableCell align="right">{l2Stock + l4Stock + whstock}</TableCell>
-                        </TableRow>
-                    </TableFooter>
+                        </TableFooter>
+                    </Table>
                 </TableContainer>
             ) : (
                 <Box

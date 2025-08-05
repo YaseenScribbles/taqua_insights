@@ -20,9 +20,9 @@ const Duration: React.FC<DurationProps> = ({
         <Box
             display={"flex"}
             flexWrap={{ xs: "wrap", sm: "nowrap" }}
-            gap={"1rem"}
+            gap={1}
             justifyContent={"center"}
-            padding={"1rem"}
+            padding={1}
         >
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
@@ -31,7 +31,7 @@ const Duration: React.FC<DurationProps> = ({
                     onChange={onFromDateChange}
                     format="dd/MM/yyyy"
                     sx={{
-                        width: "10rem",
+                        width: "9.5rem",
                     }}
                 />
             </LocalizationProvider>
@@ -42,7 +42,7 @@ const Duration: React.FC<DurationProps> = ({
                     onChange={onToDateChange}
                     format="dd/MM/yyyy"
                     sx={{
-                        width: "10rem",
+                        width: "9.5rem",
                     }}
                 />
             </LocalizationProvider>
