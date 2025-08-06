@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\LegacyController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
@@ -49,6 +50,11 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     //Users
     Route::get('/user', [UserController::class, 'showPage'])->name('UserPage');
     Route::apiResource('users', UserController::class);
+
+    //Legacy
+    Route::get('/legacy', [LegacyController::class, 'show'])->name('legacy');
+    //Api calls
+    Route::get('/legacy/report', [LegacyController::class, 'report'])->name('legacy.report');
 
     //auth
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

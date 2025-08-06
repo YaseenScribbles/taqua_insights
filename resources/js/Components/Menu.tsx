@@ -117,16 +117,16 @@ const CustomDrawer: React.FC<DrawerProps> = ({
             </List>
             <Divider />
             <List>
-                {role === "admin" && (
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <History />
-                            </ListItemIcon>
-                            <ListItemText primary={"Legacy"} />
-                        </ListItemButton>
-                    </ListItem>
-                )}
+                <ListItem disablePadding>
+                    <ListItemButton
+                        onClick={() => router.visit(route("legacy"))}
+                    >
+                        <ListItemIcon>
+                            <History />
+                        </ListItemIcon>
+                        <ListItemText primary={"Legacy"} />
+                    </ListItemButton>
+                </ListItem>
                 <ListItem disablePadding>
                     <ListItemButton
                         onClick={() => router.post(route("logout"))}
@@ -170,25 +170,39 @@ const CustomMenu: React.FC<CustomMenuProps> = ({ role }) => {
                     sx={{ display: "flex", justifyContent: "space-around" }}
                 >
                     <IconButton
-                        color={route().current() === 'supplier' ? "primary" :  "inherit"}
+                        color={
+                            route().current() === "supplier"
+                                ? "primary"
+                                : "inherit"
+                        }
                         onClick={() => router.visit(route("supplier"))}
                     >
                         <LocalShipping />
                     </IconButton>
                     <IconButton
-                        color={route().current() === 'product' ? "primary" :  "inherit"}
+                        color={
+                            route().current() === "product"
+                                ? "primary"
+                                : "inherit"
+                        }
                         onClick={() => router.visit(route("product"))}
                     >
                         <Category />
                     </IconButton>
                     <StyledFab
-                        color={route().current() === 'dashboard' ? "primary" :  "secondary"}
+                        color={
+                            route().current() === "dashboard"
+                                ? "primary"
+                                : "secondary"
+                        }
                         onClick={() => router.visit(route("dashboard"))}
                     >
                         <BarChart />
                     </StyledFab>
                     <IconButton
-                        color={route().current() === 'psr' ? "primary" :  "inherit"}
+                        color={
+                            route().current() === "psr" ? "primary" : "inherit"
+                        }
                         onClick={() => router.visit(route("psr"))}
                     >
                         <Article />
