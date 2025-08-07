@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { PageProps } from "@inertiajs/core";
 import {
     Box,
     Button,
     Container,
+    Grow,
     IconButton,
     InputAdornment,
+    Slide,
     TextField,
     Typography,
 } from "@mui/material";
@@ -68,25 +70,42 @@ const Login: React.FC<PageProps> = ({ auth }) => {
                         marginBlockEnd: "2rem",
                     }}
                 >
-                    <Typography
-                        variant="h4"
-                        gutterBottom
-                        fontFamily={"Limelight"}
+                    <Slide
+                        direction="down"
+                        in
+                        timeout={500}
+                        unmountOnExit
                     >
-                        TAQUA
-                    </Typography>
-                    <AssessmentOutlined
-                        sx={{
-                            fontSize: (theme) => theme.typography.h4.fontSize,
-                        }}
-                    />
-                    <Typography
-                        variant="h4"
-                        gutterBottom
-                        fontFamily={"Limelight"}
+                        <Typography
+                            variant="h4"
+                            gutterBottom
+                            fontFamily={"Limelight"}
+                        >
+                            TAQUA
+                        </Typography>
+                    </Slide>
+                    <Grow in timeout={1500} unmountOnExit>
+                        <AssessmentOutlined
+                            sx={{
+                                fontSize: (theme) =>
+                                    theme.typography.h4.fontSize,
+                            }}
+                        />
+                    </Grow>
+                    <Slide
+                        direction="up"
+                        in
+                        timeout={1000}
+                        unmountOnExit
                     >
-                        INSIGHTS
-                    </Typography>
+                        <Typography
+                            variant="h4"
+                            gutterBottom
+                            fontFamily={"Limelight"}
+                        >
+                            INSIGHTS
+                        </Typography>
+                    </Slide>
                 </Box>
                 <TextField
                     error={!!errors.email}

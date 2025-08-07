@@ -51,7 +51,6 @@ const Dashboard: React.FC<DashboardProps> = ({auth}) => {
                 format(toDate!, "yyyy-MM-dd"),
                 "qty"
             ),
-        refetchOnWindowFocus: false,
     });
 
     const {
@@ -66,7 +65,6 @@ const Dashboard: React.FC<DashboardProps> = ({auth}) => {
                 format(toDate!, "yyyy-MM-dd"),
                 "amount"
             ),
-        refetchOnWindowFocus: false,
     });
 
     const {
@@ -81,7 +79,6 @@ const Dashboard: React.FC<DashboardProps> = ({auth}) => {
                 format(toDate!, "yyyy-MM-dd"),
                 "qty"
             ),
-        refetchOnWindowFocus: false,
     });
 
     const {
@@ -96,7 +93,6 @@ const Dashboard: React.FC<DashboardProps> = ({auth}) => {
                 format(toDate!, "yyyy-MM-dd"),
                 "amount"
             ),
-        refetchOnWindowFocus: false,
     });
 
     return (

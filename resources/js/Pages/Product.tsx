@@ -45,7 +45,6 @@ const Product: React.FC<ProductPageProps> = ({ products, auth }) => {
         queryKey: ["productsuppliers", productId],
         queryFn: () => getProductSuppliers(productId),
         enabled: !!productId,
-        refetchOnWindowFocus: false,
     });
 
     const totalPurchase =

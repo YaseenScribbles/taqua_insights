@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 const Loading: React.FC = () => {
     const [progress, setProgress] = useState(0);
 
-    if (progress === 85) {
+    if (progress === 75) {
         router.visit(route('login'));
     }
 

@@ -28,6 +28,7 @@ import {
 import { DataGrid, GridColDef, GridFooterContainer } from "@mui/x-data-grid";
 import CustomLoadingOverlay from "@/Components/CustomLoadingOverlay";
 import PSRRow from "@/Components/PSRRow";
+import { useDebounce } from "@/Hooks/useDebounce";
 
 type Supplier = {
     id: number;
@@ -109,6 +110,7 @@ const PSR: React.FC<InvoiceProps> = ({ suppliers, auth }) => {
     const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(
         null
     );
+    const debouncedSupplierId = useDebounce(selectedSupplier?.id, 100)
     const [selectedInvoices, setSelectedInvoices] = useState<Invoice[]>([]);
     const offsetHeight = 80;
     const [headerHeight, setHeaderHeight] = useState(0);
@@ -119,8 +121,6 @@ const PSR: React.FC<InvoiceProps> = ({ suppliers, auth }) => {
     const { data: invoices, isLoading: isInvoiceLoading } = useQuery({
         queryKey: ["invoices", selectedSupplier?.id],
         queryFn: () => getInvoices(selectedSupplier!.id),
-        enabled: !!selectedSupplier,
-        refetchOnWindowFocus: false,
     });
 
     const {
@@ -128,10 +128,9 @@ const PSR: React.FC<InvoiceProps> = ({ suppliers, auth }) => {
         isLoading: isPsrLoading,
         isError: isPsrError,
     } = useQuery({
-        queryKey: ["psr", selectedSupplier?.id, invoiceQuery],
-        queryFn: () => getInvoiceProducts(selectedSupplier!.id, invoiceQuery),
-        enabled: !!selectedSupplier,
-        refetchOnWindowFocus: false,
+        queryKey: ["psr", debouncedSupplierId, invoiceQuery],
+        queryFn: () => getInvoiceProducts(debouncedSupplierId!, invoiceQuery),
+        enabled: !!debouncedSupplierId,
     });
 
     const totalPurchase =
@@ -165,6 +164,10 @@ const PSR: React.FC<InvoiceProps> = ({ suppliers, auth }) => {
         };
     }, []);
 
+    useEffect(() => {
+        setSelectedInvoices([])
+    }, [selectedSupplier])
+
     return (
         <>
             <Box
@@ -179,7 +182,7 @@ const PSR: React.FC<InvoiceProps> = ({ suppliers, auth }) => {
                 ref={headerRef}
             >
                 <Header
-                    name={`P S R ${
+                    name={`G R N ${
                         isNaN(salePercentage)
                             ? ""
                             : `(${salePercentage.toFixed(2)}%)`
