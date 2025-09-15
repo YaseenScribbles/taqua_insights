@@ -56,6 +56,11 @@ class UserController extends Controller
             'password' => 'nullable|string|confirmed|min:5',
             'role' => 'required|string|in:admin,user'
         ]);
+
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
         $user->update($data);
         return response()->json(['message' => 'User updated successfully']);
     }
