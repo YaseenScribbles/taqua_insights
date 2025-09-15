@@ -22,6 +22,7 @@ import {
     People,
     History,
     Logout,
+    Cached,
 } from "@mui/icons-material";
 import React, { SetStateAction, useState } from "react";
 import { router } from "@inertiajs/react";
@@ -114,6 +115,26 @@ const CustomDrawer: React.FC<DrawerProps> = ({
                         </ListItemButton>
                     </ListItem>
                 )}
+                <ListItem disablePadding>
+                    <ListItemButton
+                        onClick={() => router.visit(route("reorder-level"))}
+                    >
+                        <ListItemIcon>
+                            <Cached />
+                        </ListItemIcon>
+                        <ListItemText primary={"Reorder Level"} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton
+                        onClick={() => router.visit(route("reorder-level.status"))}
+                    >
+                        <ListItemIcon>
+                            <Cached />
+                        </ListItemIcon>
+                        <ListItemText primary={"Reorder Status"} />
+                    </ListItemButton>
+                </ListItem>
             </List>
             <Divider />
             <List>

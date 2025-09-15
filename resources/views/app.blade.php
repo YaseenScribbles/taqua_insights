@@ -7,7 +7,7 @@
         <title inertia>{{ config("app.name", "Taqua Insights | An Insight to Taqua") }}</title>
 
         <!-- icon -->
-         <link rel="shortcut icon" href="favicon.svg" type="image/svg">
+         <link rel="shortcut icon" href="/favicon.svg" type="image/svg">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />

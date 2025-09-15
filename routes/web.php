@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LegacyController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReorderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,17 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::get('/legacy', [LegacyController::class, 'show'])->name('legacy');
     //Api calls
     Route::get('/legacy/report', [LegacyController::class, 'report'])->name('legacy.report');
+
+    //Reorder Level
+    Route::get('/reorder-level', [ReorderController::class, 'index'])->name('reorder-level');
+    //Sync items to sqlite from pgsql
+    Route::get('/reorder-level/sync-items', [ReorderController::class, 'syncReorderLevels'])->name('reorder-level.sync-items');
+    //update reorder level
+    Route::put('/reorder-level/{reorderLevel}', [ReorderController::class, 'update'])->name('reorder-level.update');
+    //update reorder levels in bulk
+    Route::post('/reorder-level/bulk-update', [ReorderController::class, 'bulkUpdate'])->name('reorder-level.bulk-update');
+    //view status of reorder levels
+    Route::get('/reorder-level/status', [ReorderController::class, 'reorderLevelStatus'])->name('reorder-level.status');
 
     //auth
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
