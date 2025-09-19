@@ -3,11 +3,11 @@ import { PageProps } from "@inertiajs/core";
 import {
     Box,
     Button,
+    Collapse,
     Container,
     Grow,
     IconButton,
     InputAdornment,
-    Slide,
     TextField,
     Typography,
 } from "@mui/material";
@@ -25,6 +25,7 @@ const Login: React.FC<PageProps> = ({ auth }) => {
         password: "",
     });
     const [showPassword, setShowPassword] = useState(false);
+    const [showAppName, setShowAppName] = useState(false)
 
     const handleMouseUpAndDownPassword = (
         event: React.MouseEvent<HTMLButtonElement>
@@ -45,6 +46,11 @@ const Login: React.FC<PageProps> = ({ auth }) => {
             return () => clearTimeout(timer);
         }
     }, [errors]);
+
+    useEffect(() => {
+        setShowAppName(true)
+    }, [
+    ])
 
     return (
         <Container
@@ -70,10 +76,10 @@ const Login: React.FC<PageProps> = ({ auth }) => {
                         marginBlockEnd: "2rem",
                     }}
                 >
-                    <Slide
-                        direction="down"
-                        in
-                        timeout={500}
+                    <Collapse
+                        in={showAppName}
+                        orientation="horizontal"
+                        timeout={1000}
                         unmountOnExit
                     >
                         <Typography
@@ -83,8 +89,8 @@ const Login: React.FC<PageProps> = ({ auth }) => {
                         >
                             TAQUA
                         </Typography>
-                    </Slide>
-                    <Grow in timeout={1500} unmountOnExit>
+                    </Collapse>
+                    <Grow in timeout={2000} unmountOnExit>
                         <AssessmentOutlined
                             sx={{
                                 fontSize: (theme) =>
@@ -92,9 +98,9 @@ const Login: React.FC<PageProps> = ({ auth }) => {
                             }}
                         />
                     </Grow>
-                    <Slide
-                        direction="up"
-                        in
+                    <Collapse
+                        in={showAppName}
+                        orientation="horizontal"
                         timeout={1000}
                         unmountOnExit
                     >
@@ -105,7 +111,7 @@ const Login: React.FC<PageProps> = ({ auth }) => {
                         >
                             INSIGHTS
                         </Typography>
-                    </Slide>
+                    </Collapse>
                 </Box>
                 <TextField
                     error={!!errors.email}

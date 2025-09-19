@@ -19,13 +19,15 @@ return new class extends Migration
             $table->string('brand_name');
             $table->integer('size_id');
             $table->string('size_name');
+            $table->integer('supplier_id');
+            $table->string('supplier_name');
             $table->decimal('reorder_level', 10, 2)->default(10);
             $table->integer('status')->default(1); // 1 for active, 0 for inactive
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamps();
 
-            $table->unique(['product_id', 'brand_id', 'size_id'], 'unique_product_brand_size');
+            $table->unique(['product_id', 'brand_id', 'size_id', 'supplier_id'], 'unique_product_brand_size_supplier');
         });
     }
 

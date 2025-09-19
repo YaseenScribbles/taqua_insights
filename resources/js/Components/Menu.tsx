@@ -127,7 +127,21 @@ const CustomDrawer: React.FC<DrawerProps> = ({
                 </ListItem>
                 <ListItem disablePadding>
                     <ListItemButton
-                        onClick={() => router.visit(route("reorder-level.status"))}
+                        onClick={() =>
+                            router.visit(route("reorder-level.status-summary"))
+                        }
+                    >
+                        <ListItemIcon>
+                            <Cached />
+                        </ListItemIcon>
+                        <ListItemText primary={"Reorder Status - Summary"} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton
+                        onClick={() =>
+                            router.visit(route("reorder-level.status"))
+                        }
                     >
                         <ListItemIcon>
                             <Cached />

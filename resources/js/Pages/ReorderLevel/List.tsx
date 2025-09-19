@@ -29,8 +29,8 @@ import {
 import { router } from "@inertiajs/react";
 import { GridColumnVisibilityModel } from "@mui/x-data-grid";
 import { Cached, Update } from "@mui/icons-material";
-import axios from "axios";
 import { GridRowId } from "@mui/x-data-grid";
+import { useNotification } from "@/Context/NotificationContext";
 
 type Option = {
     id: number;
@@ -51,14 +51,24 @@ type ReorderLevel = {
 interface Props extends PageProps {
     products: Option[];
     brands: Option[];
+    suppliers: Option[];
     reorderLevels: ReorderLevel[];
 }
 
-const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
+const List: React.FC<Props> = ({
+    brands,
+    products,
+    suppliers,
+    reorderLevels,
+    auth,
+}) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [selectedProduct, setSelectedProduct] = useState<Option | null>(null);
     const [selectedBrand, setSelectedBrand] = useState<Option | null>(null);
+    const [selectedSupplier, setSelectedSupplier] = useState<Option | null>(
+        null
+    );
     const offsetHeight = 80;
     const [headerHeight, setHeaderHeight] = useState(0);
     const headerRef = useRef<HTMLDivElement>(null);
@@ -77,13 +87,23 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
     const [disableBulkUpdateButton, setDisableBulkUpdateButton] =
         useState(false);
 
+    const isMounting = useRef(true);
+    const { showNotification } = useNotification();
+
     const reorderLevelColumns: GridColDef[] = [
         // 🔒 Hidden ID columns
         { field: "product_id", headerName: "Product ID" },
         { field: "brand_id", headerName: "Brand ID" },
         { field: "size_id", headerName: "Size ID" },
+        { field: "supplier_id", headerName: "Supplier ID" },
 
         // 🏷 Visible columns
+        {
+            field: "supplier_name",
+            headerName: "Supplier",
+            flex: 1,
+            minWidth: 150,
+        },
         {
             field: "product_name",
             headerName: "Product",
@@ -137,6 +157,7 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
         product_id: false,
         brand_id: false,
         size_id: false,
+        supplier_id: false,
     };
 
     const processRowUpdate = (
@@ -171,8 +192,6 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
         const rowsToUpdate = Array.from(selectionModel.ids).map(
             (id: GridRowId) => {
                 const edited = editedRows[id];
-                console.log(edited);
-
                 return edited ?? reorderLevels.find((r) => r.id === id);
             }
         );
@@ -199,8 +218,14 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
                         ids: new Set<GridRowId>(),
                     });
                 },
+                onSuccess: () => {
+                    showNotification("Update successful", "success");
+                },
                 onError: (errors) => {
                     console.error(errors);
+                    Object.values(errors).forEach((msg) => {
+                        showNotification(msg as string, "error");
+                    });
                 },
             }
         );
@@ -217,9 +242,17 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
                     preserveScroll: true,
                     preserveState: true,
                     onStart: () => setDisableButton(true),
-                    onFinish: () => setDisableButton(false),
+                    onSuccess: () => {
+                        showNotification("Update successful", "success");
+                    },
+                    onFinish: () => {
+                        setDisableButton(false);
+                    },
                     onError: (errors) => {
                         console.error(errors);
+                        Object.values(errors).forEach((msg) => {
+                            showNotification(msg as string, "error");
+                        });
                     },
                 }
             );
@@ -231,6 +264,10 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
     function syncItems() {
         setIsLoading(true);
         setIsError(false);
+        showNotification(
+            "Sync started, you'll be notified when it's done.",
+            "info"
+        );
         fetch("/reorder-level/sync-items")
             .then((response) => {
                 if (!response.ok) {
@@ -240,11 +277,15 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
             })
             .then((data) => {
                 console.log("Sync successful", data);
+
                 setIsError(false);
             })
             .catch((error) => {
                 console.error("Sync failed", error);
                 setIsError(true);
+                Object.values(error).forEach((msg) => {
+                    showNotification(msg as string, "error");
+                });
             })
             .finally(() => {
                 setIsLoading(false);
@@ -272,11 +313,16 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
     }, []);
 
     useEffect(() => {
+        if (isMounting.current) {
+            isMounting.current = false;
+            return;
+        }
         router.get(
             route("reorder-level"),
             {
                 product_id: selectedProduct ? selectedProduct.id : undefined,
                 brand_id: selectedBrand ? selectedBrand.id : undefined,
+                supplier_id: selectedSupplier ? selectedSupplier.id : undefined,
             },
             {
                 preserveState: true,
@@ -284,10 +330,13 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
                 only: ["reorderLevels"],
                 onError: (errors) => {
                     console.error(errors);
+                    Object.values(errors).forEach((msg) => {
+                        showNotification(msg as string, "error");
+                    });
                 },
             }
         );
-    }, [selectedProduct, selectedBrand]);
+    }, [selectedProduct, selectedBrand, selectedSupplier]);
 
     return (
         <>
@@ -311,6 +360,25 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
                 >
                     <Autocomplete
                         disablePortal
+                        options={suppliers}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Supplier" />
+                        )}
+                        getOptionLabel={(option: Option) => option.name}
+                        isOptionEqualToValue={(option, value) =>
+                            option.id === value.id
+                        }
+                        getOptionKey={(option) => option.id}
+                        sx={{
+                            width: 300,
+                        }}
+                        value={selectedSupplier}
+                        onChange={(_, value) => {
+                            setSelectedSupplier(value);
+                        }}
+                    />
+                    <Autocomplete
+                        disablePortal
                         options={products}
                         renderInput={(params) => (
                             <TextField {...params} label="Product" />
@@ -321,7 +389,7 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
                         }
                         getOptionKey={(option) => option.id}
                         sx={{
-                            width: isMobile ? 300 : 400,
+                            width: 300,
                         }}
                         value={selectedProduct}
                         onChange={(_, value) => {
@@ -340,7 +408,7 @@ const List: React.FC<Props> = ({ brands, products, reorderLevels, auth }) => {
                         }
                         getOptionKey={(option) => option.id}
                         sx={{
-                            width: isMobile ? 300 : 400,
+                            width: 300,
                         }}
                         value={selectedBrand}
                         onChange={(_, value) => {

@@ -15,6 +15,8 @@ class ReorderLevel extends Model
         'brand_name',
         'size_id',
         'size_name',
+        'supplier_id',
+        'supplier_name',
         'reorder_level',
         'status',
         'created_by',

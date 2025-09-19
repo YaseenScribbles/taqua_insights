@@ -65,6 +65,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::put('/reorder-level/{reorderLevel}', [ReorderController::class, 'update'])->name('reorder-level.update');
     //update reorder levels in bulk
     Route::post('/reorder-level/bulk-update', [ReorderController::class, 'bulkUpdate'])->name('reorder-level.bulk-update');
+    //view status summary of reorder levels
+    Route::get('/reorder-level/status-summary', [ReorderController::class, 'reorderLevelSummary'])->name('reorder-level.status-summary');
     //view status of reorder levels
     Route::get('/reorder-level/status', [ReorderController::class, 'reorderLevelStatus'])->name('reorder-level.status');
 

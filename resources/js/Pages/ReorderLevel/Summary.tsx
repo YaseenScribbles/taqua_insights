@@ -1,70 +1,60 @@
+import CustomLoadingOverlay from "@/Components/CustomLoadingOverlay";
 import Header from "@/Components/Header";
+import CustomMenu from "@/Components/Menu";
+import { useNotification } from "@/Context/NotificationContext";
+import { PageProps } from "@inertiajs/core";
+import { Link, router } from "@inertiajs/react";
 import {
-    Box,
     Autocomplete,
-    TextField,
-    useTheme,
-    useMediaQuery,
-    LinearProgress,
+    Box,
     Table,
-    TableBody,
-    TableCell,
     TableContainer,
     TableHead,
     TableRow,
+    TableCell,
+    TableBody,
     Typography,
-    Chip,
-    IconButton,
-    CircularProgress,
+    TextField,
+    useMediaQuery,
+    useTheme,
+    LinearProgress,
 } from "@mui/material";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import React, { useEffect, useRef, useState } from "react";
-import { PageProps } from "@inertiajs/core";
-import CustomMenu from "@/Components/Menu";
-import CustomLoadingOverlay from "@/Components/CustomLoadingOverlay";
-import {
-    DataGrid,
-    GridColDef,
-    gridFilteredSortedRowIdsSelector,
-    useGridApiRef,
-} from "@mui/x-data-grid";
-import { router } from "@inertiajs/react";
-import { FileDownload } from "@mui/icons-material";
-import { handleDownload } from "@/Library/Library";
-import { useNotification } from "@/Context/NotificationContext";
 
 type Option = {
     id: number;
     name: string;
 };
 
-type ReorderLevelStatus = {
+type Summary = {
     supplier_id: number;
     supplier_name: string;
     product_id: number;
     product_name: string;
     brand_id: number;
     brand_name: string;
-    size_id: number;
-    size_name: string;
-    l4stock: number;
-    whstock: number;
-    reorder_level: number;
-    status: string;
+    reorder: number;
+    "transfer-stock": number;
+    "over-stock": number;
+    sufficient: number;
 };
+
+type Status = "reorder" | "transfer-stock" | "over-stock" | "sufficient";
 
 interface Props extends PageProps {
     products: Option[];
     brands: Option[];
     suppliers: Option[];
-    status: ReorderLevelStatus[];
+    summary: Summary[];
 }
 
-const Status: React.FC<Props> = ({
+const Summary: React.FC<Props> = ({
+    auth,
     brands,
     products,
+    summary,
     suppliers,
-    status,
-    auth,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -80,71 +70,97 @@ const Status: React.FC<Props> = ({
     const [isLoading, setIsLoading] = useState(false);
     const isMounting = useRef(true);
     const { showNotification } = useNotification();
-    const apiRef = useGridApiRef();
-    const [downloading, setDownloading] = useState(false);
+    const makeLink = (row: Summary, status: Status) =>
+        route("reorder-level.status", {
+            supplier_id: row.supplier_id,
+            product_id: row.product_id,
+            brand_id: row.brand_id,
+            status,
+        });
 
-    // Assign colors based on status
-    const colorMap: Record<string, string> = {
-        "over-stock": "#29B6F680", // 80 = ~50% opacity → lighter appearance
-        sufficient: "#66BB6A80",
-        "transfer-stock": "#FFA72680",
-        reorder: "#F4433680",
-    };
-    const reorderLevelColumns: GridColDef[] = [
+    const columns: GridColDef[] = [
         { field: "supplier_name", headerName: "Supplier", flex: 1 },
         { field: "product_name", headerName: "Product", flex: 1 },
         { field: "brand_name", headerName: "Brand", flex: 1 },
-        { field: "size_name", headerName: "Size", flex: 1 },
         {
-            field: "l4stock",
-            headerName: "L4 Stock",
-            type: "number",
-            width: 120,
+            field: "reorder",
+            headerName: "Reorder",
+            flex: 0.7,
+            renderCell: (params: GridRenderCellParams) => (
+                <Link
+                    style={{
+                        color: "#FED32C",
+                        textAlign: "right",
+                        display: "block",
+                        fontSize: 16,
+                    }}
+                    href={makeLink(params.row, "reorder")}
+                    preserveState
+                    preserveScroll
+                >
+                    {params.value}
+                </Link>
+            ),
         },
         {
-            field: "whstock",
-            headerName: "WH Stock",
-            type: "number",
-            width: 120,
+            field: "transfer-stock",
+            headerName: "Transfer Stock",
+            flex: 0.7,
+            renderCell: (params: GridRenderCellParams) => (
+                <Link
+                    style={{
+                        color: "#FED32C",
+                        textAlign: "right",
+                        display: "block",
+                        fontSize: 16,
+                    }}
+                    href={makeLink(params.row, "transfer-stock")}
+                    preserveState
+                    preserveScroll
+                >
+                    {params.value}
+                </Link>
+            ),
         },
         {
-            field: "reorder_level",
-            headerName: "Reorder Level",
-            type: "number",
-            width: 150,
+            field: "over-stock",
+            headerName: "Over Stock",
+            flex: 0.7,
+            renderCell: (params: GridRenderCellParams) => (
+                <Link
+                    style={{
+                        color: "#FED32C",
+                        textAlign: "right",
+                        display: "block",
+                        fontSize: 16,
+                    }}
+                    href={makeLink(params.row, "over-stock")}
+                    preserveState
+                    preserveScroll
+                >
+                    {params.value}
+                </Link>
+            ),
         },
         {
-            field: "status",
-            headerName: "Status",
-            width: 140,
-            renderCell: (params) => {
-                const value = params.value as string;
-
-                const colorMap: Record<
-                    string,
-                    "success" | "info" | "warning" | "error"
-                > = {
-                    "over-stock": "info",
-                    sufficient: "success",
-                    "transfer-stock": "warning",
-                    reorder: "error",
-                };
-
-                const labelMap: Record<string, string> = {
-                    "over-stock": "Over Stock",
-                    sufficient: "Sufficient",
-                    "transfer-stock": "Transfer",
-                    reorder: "Reorder",
-                };
-
-                return (
-                    <Chip
-                        label={labelMap[value] || value}
-                        color={colorMap[value] || "default"}
-                        size="small"
-                    />
-                );
-            },
+            field: "sufficient",
+            headerName: "Sufficient",
+            flex: 0.7,
+            renderCell: (params: GridRenderCellParams) => (
+                <Link
+                    style={{
+                        color: "#FED32C",
+                        textAlign: "right",
+                        display: "block",
+                        fontSize: 16,
+                    }}
+                    href={makeLink(params.row, "sufficient")}
+                    preserveState
+                    preserveScroll
+                >
+                    {params.value}
+                </Link>
+            ),
         },
     ];
 
@@ -174,7 +190,7 @@ const Status: React.FC<Props> = ({
             return;
         }
         router.get(
-            route("reorder-level.status"),
+            route("reorder-level.status-summary"),
             {
                 product_id: selectedProduct ? selectedProduct.id : undefined,
                 brand_id: selectedBrand ? selectedBrand.id : undefined,
@@ -203,7 +219,7 @@ const Status: React.FC<Props> = ({
                 paddingBlockEnd={2}
                 ref={headerRef}
             >
-                <Header name={"Reorder Status"} />
+                <Header name={"Reorder Status - Summary"} />
                 <Box
                     display={"flex"}
                     flexWrap={"wrap"}
@@ -267,55 +283,6 @@ const Status: React.FC<Props> = ({
                             setSelectedBrand(value);
                         }}
                     />
-                    <IconButton
-                        onClick={() => {
-                            const filteredSortedIds =
-                                gridFilteredSortedRowIdsSelector(apiRef);
-
-                            const filteredData = filteredSortedIds.map((id) => {
-                                const row = apiRef.current?.getRow(
-                                    id
-                                ) as ReorderLevelStatus;
-                                return {
-                                    Supplier: row.supplier_name,
-                                    Product: row.product_name,
-                                    Brand: row.brand_name,
-                                    Size: row.size_name,
-                                    L4Stock: row.l4stock,
-                                    WHStock: row.whstock,
-                                    ReorderLevel: row.reorder_level,
-                                    Status: row.status,
-                                };
-                            });
-                            if (filteredData.length === 0) {
-                                showNotification(
-                                    "No data to export",
-                                    "warning"
-                                );
-                                return;
-                            }
-                            try {
-                                setDownloading(true)
-                                handleDownload(filteredData);
-                            } catch (error) {
-                                showNotification(
-                                    "Error downloading the file",
-                                    "error"
-                                );
-                            } finally {
-                                setDownloading(false);
-                            }
-                        }}
-                        title="Download Excel"
-                        size="large"
-                        disabled={downloading}
-                    >
-                        {downloading ? (
-                            <CircularProgress color="primary" />
-                        ) : (
-                            <FileDownload color="primary" />
-                        )}
-                    </IconButton>
                 </Box>
             </Box>
             {isMobile ? (
@@ -380,49 +347,30 @@ const Status: React.FC<Props> = ({
                                     </TableCell>
                                 </TableRow>
                             )}
-                            {status &&
-                                status.length > 0 &&
-                                status.map((row) => (
+                            {summary &&
+                                summary.length > 0 &&
+                                summary.map((row) => (
                                     <TableRow
-                                        key={`${row.product_id}-${row.brand_id}-${row.size_id}-${row.supplier_id}`}
-                                        sx={{
-                                            backgroundColor:
-                                                colorMap[row.status],
-                                        }}
+                                        key={`${row.product_id}-${row.brand_id}-${row.supplier_id}`}
                                     >
+                                        <TableCell>
+                                            {row.supplier_name}
+                                        </TableCell>
                                         <TableCell>
                                             {row.product_name}
                                         </TableCell>
                                         <TableCell>{row.brand_name}</TableCell>
-                                        <TableCell>{row.size_name}</TableCell>
-                                        <TableCell>
-                                            <Box
-                                                display={"flex"}
-                                                flexDirection={"column"}
-                                                justifyContent={"center"}
-                                            >
-                                                <Typography
-                                                    variant="inherit"
-                                                    align="right"
-                                                    sx={{ borderBottom: 1 }}
-                                                >
-                                                    {row.l4stock}
-                                                </Typography>
-                                                <Typography
-                                                    variant="inherit"
-                                                    align="right"
-                                                    sx={{ borderBottom: 1 }}
-                                                >
-                                                    {row.whstock}
-                                                </Typography>
-                                                <Typography
-                                                    variant="inherit"
-                                                    align="right"
-                                                    sx={{ borderBottom: 1 }}
-                                                >
-                                                    {row.reorder_level}
-                                                </Typography>
-                                            </Box>
+                                        <TableCell align="right">
+                                            {row.reorder}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            {row["transfer-stock"]}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            {row["over-stock"]}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            {row.sufficient}
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -434,12 +382,11 @@ const Status: React.FC<Props> = ({
                     height={`calc(100dvh - ${offsetHeight + headerHeight}px)`}
                     overflow={"auto"}
                 >
-                    <DataGrid<ReorderLevelStatus>
-                        apiRef={apiRef}
-                        columns={reorderLevelColumns}
-                        rows={status || []}
-                        getRowId={(row: ReorderLevelStatus) =>
-                            `${row.product_id}-${row.brand_id}-${row.size_id}-${row.supplier_id}`
+                    <DataGrid<Summary>
+                        columns={columns}
+                        rows={summary || []}
+                        getRowId={(row: Summary) =>
+                            `${row.product_id}-${row.brand_id}-${row.supplier_id}`
                         }
                         loading={isLoading}
                         slots={{
@@ -453,4 +400,4 @@ const Status: React.FC<Props> = ({
     );
 };
 
-export default Status;
+export default Summary;
