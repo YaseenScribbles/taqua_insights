@@ -39,6 +39,8 @@ type Option = {
 
 type ReorderLevel = {
     id: number;
+    supplier_id:number;
+    supplier_name: string;
     product_id: number;
     product_name: string;
     brand_id: number;
@@ -456,6 +458,7 @@ const List: React.FC<Props> = ({
                     <Table size="small">
                         <TableHead>
                             <TableRow>
+                                <TableCell>Supplier</TableCell>
                                 <TableCell>Product</TableCell>
                                 <TableCell>Brand</TableCell>
                                 <TableCell>Size</TableCell>
@@ -483,6 +486,7 @@ const List: React.FC<Props> = ({
                                 reorderLevels.length > 0 &&
                                 reorderLevels.map((row) => (
                                     <TableRow key={row.id}>
+                                        <TableCell>{row.supplier_name}</TableCell>
                                         <TableCell>
                                             {row.product_name}
                                         </TableCell>

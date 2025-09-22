@@ -267,55 +267,59 @@ const Status: React.FC<Props> = ({
                             setSelectedBrand(value);
                         }}
                     />
-                    <IconButton
-                        onClick={() => {
-                            const filteredSortedIds =
-                                gridFilteredSortedRowIdsSelector(apiRef);
+                    {!isMobile && (
+                        <IconButton
+                            onClick={() => {
+                                const filteredSortedIds =
+                                    gridFilteredSortedRowIdsSelector(apiRef);
 
-                            const filteredData = filteredSortedIds.map((id) => {
-                                const row = apiRef.current?.getRow(
-                                    id
-                                ) as ReorderLevelStatus;
-                                return {
-                                    Supplier: row.supplier_name,
-                                    Product: row.product_name,
-                                    Brand: row.brand_name,
-                                    Size: row.size_name,
-                                    L4Stock: row.l4stock,
-                                    WHStock: row.whstock,
-                                    ReorderLevel: row.reorder_level,
-                                    Status: row.status,
-                                };
-                            });
-                            if (filteredData.length === 0) {
-                                showNotification(
-                                    "No data to export",
-                                    "warning"
+                                const filteredData = filteredSortedIds.map(
+                                    (id) => {
+                                        const row = apiRef.current?.getRow(
+                                            id
+                                        ) as ReorderLevelStatus;
+                                        return {
+                                            Supplier: row.supplier_name,
+                                            Product: row.product_name,
+                                            Brand: row.brand_name,
+                                            Size: row.size_name,
+                                            L4Stock: row.l4stock,
+                                            WHStock: row.whstock,
+                                            ReorderLevel: row.reorder_level,
+                                            Status: row.status,
+                                        };
+                                    }
                                 );
-                                return;
-                            }
-                            try {
-                                setDownloading(true)
-                                handleDownload(filteredData);
-                            } catch (error) {
-                                showNotification(
-                                    "Error downloading the file",
-                                    "error"
-                                );
-                            } finally {
-                                setDownloading(false);
-                            }
-                        }}
-                        title="Download Excel"
-                        size="large"
-                        disabled={downloading}
-                    >
-                        {downloading ? (
-                            <CircularProgress color="primary" />
-                        ) : (
-                            <FileDownload color="primary" />
-                        )}
-                    </IconButton>
+                                if (filteredData.length === 0) {
+                                    showNotification(
+                                        "No data to export",
+                                        "warning"
+                                    );
+                                    return;
+                                }
+                                try {
+                                    setDownloading(true);
+                                    handleDownload(filteredData);
+                                } catch (error) {
+                                    showNotification(
+                                        "Error downloading the file",
+                                        "error"
+                                    );
+                                } finally {
+                                    setDownloading(false);
+                                }
+                            }}
+                            title="Download Excel"
+                            size="large"
+                            disabled={downloading}
+                        >
+                            {downloading ? (
+                                <CircularProgress color="primary" />
+                            ) : (
+                                <FileDownload color="primary" />
+                            )}
+                        </IconButton>
+                    )}
                 </Box>
             </Box>
             {isMobile ? (
@@ -332,6 +336,7 @@ const Status: React.FC<Props> = ({
                     <Table size="small">
                         <TableHead>
                             <TableRow>
+                                <TableCell>Supplier</TableCell>
                                 <TableCell>Product</TableCell>
                                 <TableCell>Brand</TableCell>
                                 <TableCell>Size</TableCell>
@@ -390,6 +395,9 @@ const Status: React.FC<Props> = ({
                                                 colorMap[row.status],
                                         }}
                                     >
+                                        <TableCell>
+                                            {row.supplier_name}
+                                        </TableCell>
                                         <TableCell>
                                             {row.product_name}
                                         </TableCell>

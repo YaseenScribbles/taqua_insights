@@ -89,10 +89,11 @@ const Summary: React.FC<Props> = ({
             renderCell: (params: GridRenderCellParams) => (
                 <Link
                     style={{
-                        color: "#FED32C",
+                        color: "#FFF",
                         textAlign: "right",
                         display: "block",
-                        fontSize: 16,
+                        textDecorationColor: "#FED32C",
+                        textUnderlineOffset: 3
                     }}
                     href={makeLink(params.row, "reorder")}
                     preserveState
@@ -109,10 +110,11 @@ const Summary: React.FC<Props> = ({
             renderCell: (params: GridRenderCellParams) => (
                 <Link
                     style={{
-                        color: "#FED32C",
+                        color: "#FFF",
                         textAlign: "right",
                         display: "block",
-                        fontSize: 16,
+                        textDecorationColor: "#FED32C",
+                        textUnderlineOffset: 3
                     }}
                     href={makeLink(params.row, "transfer-stock")}
                     preserveState
@@ -129,10 +131,11 @@ const Summary: React.FC<Props> = ({
             renderCell: (params: GridRenderCellParams) => (
                 <Link
                     style={{
-                        color: "#FED32C",
+                        color: "#FFF",
                         textAlign: "right",
                         display: "block",
-                        fontSize: 16,
+                        textDecorationColor: "#FED32C",
+                        textUnderlineOffset: 3
                     }}
                     href={makeLink(params.row, "over-stock")}
                     preserveState
@@ -149,10 +152,11 @@ const Summary: React.FC<Props> = ({
             renderCell: (params: GridRenderCellParams) => (
                 <Link
                     style={{
-                        color: "#FED32C",
+                        color: "#FFF",
                         textAlign: "right",
                         display: "block",
-                        fontSize: 16,
+                        textDecorationColor: "#FED32C",
+                        textUnderlineOffset: 3
                     }}
                     href={makeLink(params.row, "sufficient")}
                     preserveState
@@ -299,35 +303,13 @@ const Summary: React.FC<Props> = ({
                     <Table size="small">
                         <TableHead>
                             <TableRow>
+                                <TableCell>Supplier</TableCell>
                                 <TableCell>Product</TableCell>
                                 <TableCell>Brand</TableCell>
-                                <TableCell>Size</TableCell>
-                                <TableCell>
-                                    <Box
-                                        display={"flex"}
-                                        flexDirection={"column"}
-                                        justifyContent={"center"}
-                                    >
-                                        <Typography
-                                            variant="inherit"
-                                            sx={{ borderBottom: 1 }}
-                                        >
-                                            L4 Stock
-                                        </Typography>
-                                        <Typography
-                                            variant="inherit"
-                                            sx={{ borderBottom: 1 }}
-                                        >
-                                            WH Stock
-                                        </Typography>
-                                        <Typography
-                                            variant="inherit"
-                                            sx={{ borderBottom: 1 }}
-                                        >
-                                            R. Level
-                                        </Typography>
-                                    </Box>
-                                </TableCell>
+                                <TableCell>Reorder</TableCell>
+                                <TableCell>T. Stock</TableCell>
+                                <TableCell>O. Stock</TableCell>
+                                <TableCell>Sufficient</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
