@@ -23,6 +23,7 @@ import {
     History,
     Logout,
     Cached,
+    Star,
 } from "@mui/icons-material";
 import React, { SetStateAction, useState } from "react";
 import { router } from "@inertiajs/react";
@@ -101,6 +102,18 @@ const CustomDrawer: React.FC<DrawerProps> = ({
                             <Article />
                         </ListItemIcon>
                         <ListItemText primary={"GRN"} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton
+                        onClick={() =>
+                            router.visit(route("topSuppliersAndBrands"))
+                        }
+                    >
+                        <ListItemIcon>
+                            <Star />
+                        </ListItemIcon>
+                        <ListItemText primary={"Product Rankings"} />
                     </ListItemButton>
                 </ListItem>
                 {role === "admin" && (

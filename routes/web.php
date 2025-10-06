@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LegacyController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductwiseTopNController;
 use App\Http\Controllers\ReorderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
@@ -69,6 +70,13 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::get('/reorder-level/status-summary', [ReorderController::class, 'reorderLevelSummary'])->name('reorder-level.status-summary');
     //view status of reorder levels
     Route::get('/reorder-level/status', [ReorderController::class, 'reorderLevelStatus'])->name('reorder-level.status');
+
+    //Top N of Suppliers And Brand for each Products
+    Route::get('/top-suppliers-and-brands', [ProductwiseTopNController::class, 'show'])->name('topSuppliersAndBrands');
+    //Get Top Suppliers for each product
+    Route::get('/top-n-suppliers', [ProductwiseTopNController::class, 'topNSupplierForEachProducts'])->name('topNSupplierForEachProducts');
+    //Get Top Brands for each product
+    Route::get('/top-n-brands', [ProductwiseTopNController::class, 'topNBrandsForEachProducts'])->name('topNBrandsForEachProducts');
 
     //auth
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

@@ -20,9 +20,8 @@ const Duration: React.FC<DurationProps> = ({
         <Box
             display={"flex"}
             flexWrap={{ xs: "wrap", sm: "nowrap" }}
-            gap={1}
             justifyContent={"center"}
-            padding={1}
+            gap={1}
         >
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
